@@ -8,13 +8,14 @@ You can use this package to check if two given expressions are duplicate/equival
  are considered duplicate/equivalent, if 
  - when P is true, Q is true as well and  when P is false, Q is false as well and vice versa
  
-## Installation:
+ This is done by generating truth tables for the given expression and comparing the truth tables. If both the generated truth tables are equal, we concur that given expressions are equal as well. 
+## Installation
 Download this package into your golang project.
  ```go
 go get github.com/nytimes/go-compare-expressions
 ```
 
-## Usage:
+## Usage
  To compare any two boolean/logical expression, call `AreDuplicateExpressions` method by passing the two expression that you want to compare.
  ```go
     expr1 := "(foo == 1 && bar == 1) || baz = 0 " 
@@ -22,11 +23,13 @@ go get github.com/nytimes/go-compare-expressions
 	result, err := AreDuplicateExpressions(expr1,expr2)
 ```
 
-## Test:
+## Test
 ```go
 go test .
 ```
-## Examples: 
+
+
+## Examples 
 Examples can be found [here](https://github.com/nytimes/go-compare-expressions/tree/master/examples) 
 
 ## Operations supported:
