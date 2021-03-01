@@ -8,18 +8,18 @@ import (
 	"strings"
 )
 /**
-This is the main function need to be called to verify if 2 expressions are duplicate or not.
-This
+This is the main function that is to be called to verify if 2 expressions are duplicate or not.
+
+Usage:
 parameters:  expr1 a == 1 && b == 1 ,   expr1 b == 1 && a == 1
 return (true, nil)
 
-
 Note that the expressions provided should be restricted to have values mentioned below
 Currently provides support for
-operators-------  && ||
-comparators----- ==
-values or right side of expressions to be binary only. So it can be 1 or 0
-attribute or left side of expression can be any valid string name
+operators                           ----  && ||
+comparators                         ----  ==
+values or right side of expressions ----  to be binary only. So it can be 1 or 0
+attribute or left side of expression ---- can be any valid string name
  */
 func CheckIfDuplicateExpressions(expr1 string, expr2 string) (bool, error) {
 	parameters, err := ValidateInput(expr1, expr2)
@@ -48,7 +48,10 @@ func CheckIfDuplicateExpressions(expr1 string, expr2 string) (bool, error) {
 }
 
 /**
-This function is to validate the input to check if the expressions have valid format and have same number of parameters in both
+This function is to validate the input in the following way.
+1. It checks if the given expressions have valid format
+2. It checks if the given expressions have same number of parameters
+Example:
 parameters:  expr1 a == 1 && b == 1,expr1 b == 1 && a == 1   return: ["a","b"], nil
 parameters:  expr1 a == 1 && b == 1,expr1 b == 1 && a == 1 and c == 1  "expressions have different number of parameters"
  */
@@ -76,7 +79,7 @@ func ValidateInput(expr1, expr2 string) ([]string, error) {
 
 
 /**
-filter the array of string and return a set of strings with unique parameters
+This function filters the duplicates from given array of string
  */
 func FilterDuplicates(params []string) []string {
 	parametersMap := make(map[string]interface{})
@@ -92,13 +95,13 @@ func FilterDuplicates(params []string) []string {
 }
 
 /**
-uses regular expressions to validate the format.
+This function validates the given input expression. It uses regular expressions to validate the format.
 Expr should be something like "a == 1" and
-currently only supports
-operators-------  && ||
-comparators----- ==
-values or right side of expressions to be binary only. So it can be 1 or 0
-attribute or left side of expression can be any valid string name
+Currently provides support for
+operators                           ----  && ||
+comparators                         ----  ==
+values or right side of expressions ----  to be binary only. So it can be 1 or 0
+attribute or left side of expression ---- can be any valid string name
  */
 func ValidateFormat(expr string) ([]string, error) {
 	regex := regexp.MustCompile(`\s*[=]{2}?\s*[1|0]`)
@@ -140,7 +143,7 @@ func ValidateFormat(expr string) ([]string, error) {
 }
 
 /**
-to check whether all strings present in params2 is contained in params1
+This function checks whether all strings present in params2 is contained in params1
  */
 func ListContains(params1, params2 []string) error {
 	if len(params1) != len(params2) {
@@ -162,7 +165,8 @@ func ListContains(params1, params2 []string) error {
 }
 
 /**
-This is a table to generatate the truth table for the given expression
+This function generates the truth table for the given expression and set of parameters present in the expression.
+It used tail recursion to evaluate expression for all possible values to the set of parameters.
  */
 func GenerateTruthTable(expr string, parameters []string, parametersMap map[string]interface{}, index int, count *[]bool) error {
 	if index == len(parameters) {
@@ -191,7 +195,7 @@ func GenerateTruthTable(expr string, parameters []string, parametersMap map[stri
 }
 
 /**
-uses govaluate to evaluate the provided boolean expression
+This function uses govaluate library to evaluate the provided boolean expression
  */
 func EvaluateExpression(expr string, parameters map[string]interface{}) (interface{}, error) {
 	expression, err := govaluate.NewEvaluableExpression(expr)
