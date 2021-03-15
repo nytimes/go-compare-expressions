@@ -8,7 +8,7 @@ You can use this package to check if two given expressions are duplicate/equival
  are considered duplicate/equivalent, if 
  - when P is true, Q is true as well and  when P is false, Q is false as well and vice versa
  
- This is done by generating truth tables for the given expression and comparing the truth tables. For generating truth tables, we evaluate the expressions using [govaluate](https://github.com/Knetic/govaluate).  If both the generated truth tables are equal, we concur that given expressions are equal as well. 
+ This is done by generating truth tables for the given expression and comparing the truth tables. If both the generated truth tables are equal, we concur that given expressions are equal as well. 
 ## Installation
 Download this package into your golang project.
  ```go
