@@ -1,4 +1,4 @@
-module go-compare-expressions
+module github.com/nytimes/go-compare-expressions
 
 go 1.14
 
