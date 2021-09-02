@@ -39,7 +39,6 @@ func TestValidateFormat(t *testing.T) {
 
 	for _, table := range tables {
 		result, err := ValidateFormat(table.expr)
-		fmt.Println(table)
 		if err == nil && table.err != nil {
 			t.Errorf("validateFormat error failed in test %s, got: %v, want: %v.", table.name, err, table.err)
 		} else if table.err != nil && table.err.Error() != err.Error() {
