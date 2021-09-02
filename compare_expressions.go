@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strings"
 )
+
 /**
 This is the main function that is to be called to verify if 2 expressions are duplicate or not.
 
@@ -20,7 +21,7 @@ operators                           ----  && ||
 comparators                         ----  ==
 values or right side of expressions ----  to be binary only. So it can be 1 or 0
 attribute or left side of expression ---- can be any valid string name
- */
+*/
 func CheckIfDuplicateExpressions(expr1 string, expr2 string) (bool, error) {
 	parameters, err := ValidateInput(expr1, expr2)
 	if err != nil {
@@ -54,7 +55,7 @@ This function is to validate the input in the following way.
 Example:
 parameters:  expr1 a == 1 && b == 1,expr1 b == 1 && a == 1   return: ["a","b"], nil
 parameters:  expr1 a == 1 && b == 1,expr1 b == 1 && a == 1 and c == 1  "expressions have different number of parameters"
- */
+*/
 func ValidateInput(expr1, expr2 string) ([]string, error) {
 	params1, err := ValidateFormat(expr1)
 	if err != nil {
@@ -77,10 +78,9 @@ func ValidateInput(expr1, expr2 string) ([]string, error) {
 	return params1, nil
 }
 
-
 /**
 This function filters the duplicates from given array of string
- */
+*/
 func FilterDuplicates(params []string) []string {
 	parametersMap := make(map[string]interface{})
 	list := []string{}
@@ -102,17 +102,15 @@ operators                           ----  && ||
 comparators                         ----  ==
 values or right side of expressions ----  to be binary only. So it can be 1 or 0
 attribute or left side of expression ---- can be any valid string name
- */
+*/
 func ValidateFormat(expr string) ([]string, error) {
 	regex := regexp.MustCompile(`\s*[=]{2}?\s*[1|0]`)
 	replaceExpr := regex.ReplaceAllString(expr, " ")
 	result := strings.Fields(replaceExpr)
 
-
-	equalsFound := strings.Contains(replaceExpr, "=")
-	onesFound := strings.Contains(replaceExpr, "1")
-	zeroesFound := strings.Contains(replaceExpr, "0")
-	if equalsFound || onesFound || zeroesFound {
+	invalidRegex := regexp.MustCompile(`\s+[1.0.=]{1}\s*`)
+	invalidExpr := invalidRegex.MatchString(replaceExpr)
+	if invalidExpr {
 		return nil, errors.New(fmt.Sprintf("Invalid expression, Required Format 'variable == 1 or 0'"))
 	}
 
@@ -144,7 +142,7 @@ func ValidateFormat(expr string) ([]string, error) {
 
 /**
 This function checks whether all strings present in params2 is contained in params1
- */
+*/
 func ListContains(params1, params2 []string) error {
 	if len(params1) != len(params2) {
 		return errors.New(fmt.Sprintf("expressions have different number of parameters, params1:%v , params2:%v", params1, params2))
@@ -167,7 +165,7 @@ func ListContains(params1, params2 []string) error {
 /**
 This function generates the truth table for the given expression and set of parameters present in the expression.
 It used tail recursion to evaluate expression for all possible values to the set of parameters.
- */
+*/
 func GenerateTruthTable(expr string, parameters []string, parametersMap map[string]interface{}, index int, count *[]bool) error {
 	if index == len(parameters) {
 		result, err := EvaluateExpression(expr, parametersMap)
@@ -196,7 +194,7 @@ func GenerateTruthTable(expr string, parameters []string, parametersMap map[stri
 
 /**
 This function uses govaluate library to evaluate the provided boolean expression
- */
+*/
 func EvaluateExpression(expr string, parameters map[string]interface{}) (interface{}, error) {
 	expression, err := govaluate.NewEvaluableExpression(expr)
 	if err != nil {
@@ -208,4 +206,3 @@ func EvaluateExpression(expr string, parameters map[string]interface{}) (interfa
 	}
 	return result, nil
 }
-
