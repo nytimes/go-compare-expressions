@@ -21,6 +21,7 @@ func TestValidateFormat(t *testing.T) {
 		{"success_when_2_params_with_brackets", "(a == 1 && b == 1 )", []string{"a", "b"}, nil},
 		{"success_when_3_params_with_brackets", "(a == 1) && (b == 1 || c == 1)", []string{"a", "b", "c"}, nil},
 
+		{"success_when_digits_in_variable_no_space", "(a0==1  &&  b1==0 )", []string{"a0", "b1"}, nil},
 		{"success_when_one_digit_in_variable", "(a-1 == 1 && b-0 == 1)", []string{"a-1", "b-0"}, nil},
 		{"success_when_double_digits_in_variable", "(a_18 == 1 && b_20 == 1 )", []string{"a_18", "b_20"}, nil},
 		{"success_when_pair_digits_in_variable", "(a_18_04 == 1  && b_20_10  == 1)", []string{"a_18_04", "b_20_10"}, nil},
