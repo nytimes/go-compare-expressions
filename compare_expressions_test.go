@@ -14,20 +14,25 @@ func TestValidateFormat(t *testing.T) {
 		result []string
 		err    error
 	}{
+
 		{"success_when_simple_expression", "a == 1", []string{"a"}, nil},
 		{"success_when_2_params", "a == 1 && b == 1", []string{"a", "b"}, nil},
 		{"success_when_3_params", "a == 1 && b == 1 || c == 1", []string{"a", "b", "c"}, nil},
 		{"success_when_2_params_with_brackets", "(a == 1 && b == 1 )", []string{"a", "b"}, nil},
 		{"success_when_3_params_with_brackets", "(a == 1) && (b == 1 || c == 1)", []string{"a", "b", "c"}, nil},
 
+		{"success_when_digits_in_variable_no_space", "(a0==1  &&  b1==0 )", []string{"a0", "b1"}, nil},
+		{"success_when_one_digit_in_variable", "(a-1 == 1 && b-0 == 1)", []string{"a-1", "b-0"}, nil},
+		{"success_when_double_digits_in_variable", "(a_18 == 1 && b_20 == 1 )", []string{"a_18", "b_20"}, nil},
+		{"success_when_pair_digits_in_variable", "(a_18_04 == 1  && b_20_10  == 1)", []string{"a_18_04", "b_20_10"}, nil},
 
 		{"error_when_invalid_format_equals", "a === 1", nil, errors.New(fmt.Sprintf("Invalid expression, Required Format 'variable == 1 or 0'"))},
 		{"error_when_invalid_format_ones", "a == 11", nil, errors.New(fmt.Sprintf("Invalid expression, Required Format 'variable == 1 or 0'"))},
 		{"error_when_invalid_format_zeroes", "a == 00", nil, errors.New(fmt.Sprintf("Invalid expression, Required Format 'variable == 1 or 0'"))},
 
-		{"error_when_invalid_format_equals", "a == 1 && b ==== 1", nil, errors.New(fmt.Sprintf("Invalid expression, Required Format 'variable == 1 or 0'"))},
-		{"error_when_invalid_format_ones", "a == 1 && b == 11", nil, errors.New(fmt.Sprintf("Invalid expression, Required Format 'variable == 1 or 0'"))},
-		{"error_when_invalid_format_zeroes", "a == 00 && b == 0", nil, errors.New(fmt.Sprintf("Invalid expression, Required Format 'variable == 1 or 0'"))},
+		{"error_when_invalid_format_equals_pair", "a == 1 && b ==== 1", nil, errors.New(fmt.Sprintf("Invalid expression, Required Format 'variable == 1 or 0'"))},
+		{"error_when_invalid_format_ones_pair", "a == 1 && b == 11", nil, errors.New(fmt.Sprintf("Invalid expression, Required Format 'variable == 1 or 0'"))},
+		{"error_when_invalid_format_zeroes_pair", "a == 00 && b == 0", nil, errors.New(fmt.Sprintf("Invalid expression, Required Format 'variable == 1 or 0'"))},
 
 		{"error_when_invalid_format_ands", "a == 0 &&& b == 1", nil, errors.New(fmt.Sprintf("Invalid expression, Allowed combinators && or ||"))},
 		{"error_when_invalid_format_ors", "a == 0 |||| b == 1", nil, errors.New(fmt.Sprintf("Invalid expression, Allowed combinators && or ||"))},
@@ -35,7 +40,9 @@ func TestValidateFormat(t *testing.T) {
 
 	for _, table := range tables {
 		result, err := ValidateFormat(table.expr)
-		if table.err != nil && table.err.Error() != err.Error() {
+		if err == nil && table.err != nil {
+			t.Errorf("validateFormat error failed in test %s, got: %v, want: %v.", table.name, err, table.err)
+		} else if table.err != nil && table.err.Error() != err.Error() {
 			t.Errorf("validateFormat error failed in test %s, got: %v, want: %v.", table.name, err, table.err)
 		} else if table.err == nil && !reflect.DeepEqual(result, table.result) {
 			t.Errorf("validateFormat failed in test %s, got: %v, want: %v.", table.name, result, table.result)
