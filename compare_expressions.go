@@ -75,7 +75,13 @@ func ValidateInput(expr1, expr2 string) ([]string, error) {
 		fmt.Printf("Error comparing lists")
 		return nil, err
 	}
-	return params1, nil
+
+	var finalParams []string
+	for _, p := range params1 {
+		finalParams = append(finalParams, strings.ReplaceAll(p, ".", "_"))
+	}
+
+	return finalParams, nil
 }
 
 /**
@@ -104,11 +110,11 @@ values or right side of expressions ----  to be binary only. So it can be 1 or 0
 attribute or left side of expression ---- can be any valid string name
 */
 func ValidateFormat(expr string) ([]string, error) {
-	regex := regexp.MustCompile(`\s*[=]{2}?\s*[1|0]`)
+	regex := regexp.MustCompile(`\s*[!=><]{2}?\s*[\d]`)
 	replaceExpr := regex.ReplaceAllString(expr, " ")
 	result := strings.Fields(replaceExpr)
 
-	invalidRegex := regexp.MustCompile(`\s+[1.0.=]{1}\s*`)
+	invalidRegex := regexp.MustCompile(`\s+[!=><\d]{1}\s*`)
 	invalidExpr := invalidRegex.MatchString(replaceExpr)
 	if invalidExpr {
 		return nil, errors.New(fmt.Sprintf("Invalid expression, Required Format 'variable == 1 or 0'"))
@@ -167,8 +173,10 @@ This function generates the truth table for the given expression and set of para
 It used tail recursion to evaluate expression for all possible values to the set of parameters.
 */
 func GenerateTruthTable(expr string, parameters []string, parametersMap map[string]interface{}, index int, count *[]bool) error {
+	separatRegex := regexp.MustCompile(`[.]`)
+	replexpr := separatRegex.ReplaceAllString(expr, "_")
 	if index == len(parameters) {
-		result, err := EvaluateExpression(expr, parametersMap)
+		result, err := EvaluateExpression(replexpr, parametersMap)
 		if err != nil {
 			fmt.Errorf("Unable to  evaluate expression, error: %v", err.Error())
 			return err

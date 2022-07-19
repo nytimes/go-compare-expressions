@@ -15,27 +15,30 @@ func TestValidateFormat(t *testing.T) {
 		err    error
 	}{
 
-		{"success_when_simple_expression", "a == 1", []string{"a"}, nil},
-		{"success_when_2_params", "a == 1 && b == 1", []string{"a", "b"}, nil},
-		{"success_when_3_params", "a == 1 && b == 1 || c == 1", []string{"a", "b", "c"}, nil},
-		{"success_when_2_params_with_brackets", "(a == 1 && b == 1 )", []string{"a", "b"}, nil},
-		{"success_when_3_params_with_brackets", "(a == 1) && (b == 1 || c == 1)", []string{"a", "b", "c"}, nil},
+		{"success_when_flex_expression_existing", "(crime == 1 && (entertainment_tv ==1 || movies == 1))", []string{"crime", "entertainment_tv", "movies"}, nil},
+		{"success_when_flex_expression", "(firstparty.books_417 == 1 || (topic.pvw_7d_fitness_320 >= 1 || topic.pvw_30d_fitness_320 >= 1) && (section.pvw_7d_sports >= 1 || subsection.pvw_7d_baseball >= 1))", []string{"firstparty.books_417", "topic.pvw_7d_fitness_320"}, nil},
 
-		{"success_when_digits_in_variable_no_space", "(a0==1  &&  b1==0 )", []string{"a0", "b1"}, nil},
-		{"success_when_one_digit_in_variable", "(a-1 == 1 && b-0 == 1)", []string{"a-1", "b-0"}, nil},
-		{"success_when_double_digits_in_variable", "(a_18 == 1 && b_20 == 1 )", []string{"a_18", "b_20"}, nil},
-		{"success_when_pair_digits_in_variable", "(a_18_04 == 1  && b_20_10  == 1)", []string{"a_18_04", "b_20_10"}, nil},
-
-		{"error_when_invalid_format_equals", "a === 1", nil, errors.New(fmt.Sprintf("Invalid expression, Required Format 'variable == 1 or 0'"))},
-		{"error_when_invalid_format_ones", "a == 11", nil, errors.New(fmt.Sprintf("Invalid expression, Required Format 'variable == 1 or 0'"))},
-		{"error_when_invalid_format_zeroes", "a == 00", nil, errors.New(fmt.Sprintf("Invalid expression, Required Format 'variable == 1 or 0'"))},
-
-		{"error_when_invalid_format_equals_pair", "a == 1 && b ==== 1", nil, errors.New(fmt.Sprintf("Invalid expression, Required Format 'variable == 1 or 0'"))},
-		{"error_when_invalid_format_ones_pair", "a == 1 && b == 11", nil, errors.New(fmt.Sprintf("Invalid expression, Required Format 'variable == 1 or 0'"))},
-		{"error_when_invalid_format_zeroes_pair", "a == 00 && b == 0", nil, errors.New(fmt.Sprintf("Invalid expression, Required Format 'variable == 1 or 0'"))},
-
-		{"error_when_invalid_format_ands", "a == 0 &&& b == 1", nil, errors.New(fmt.Sprintf("Invalid expression, Allowed combinators && or ||"))},
-		{"error_when_invalid_format_ors", "a == 0 |||| b == 1", nil, errors.New(fmt.Sprintf("Invalid expression, Allowed combinators && or ||"))},
+		//{"success_when_simple_expression", "a == 1", []string{"a"}, nil},
+		//{"success_when_2_params", "a == 1 && b == 1", []string{"a", "b"}, nil},
+		//{"success_when_3_params", "a == 1 && b == 1 || c == 1", []string{"a", "b", "c"}, nil},
+		//{"success_when_2_params_with_brackets", "(a == 1 && b == 1 )", []string{"a", "b"}, nil},
+		//{"success_when_3_params_with_brackets", "(a == 1) && (b == 1 || c == 1)", []string{"a", "b", "c"}, nil},
+		//
+		//{"success_when_digits_in_variable_no_space", "(a0==1  &&  b1==0 )", []string{"a0", "b1"}, nil},
+		//{"success_when_one_digit_in_variable", "(a-1 == 1 && b-0 == 1)", []string{"a-1", "b-0"}, nil},
+		//{"success_when_double_digits_in_variable", "(a_18 == 1 && b_20 == 1 )", []string{"a_18", "b_20"}, nil},
+		//{"success_when_pair_digits_in_variable", "(a_18_04 == 1  && b_20_10  == 1)", []string{"a_18_04", "b_20_10"}, nil},
+		//
+		//{"error_when_invalid_format_equals", "a === 1", nil, errors.New(fmt.Sprintf("Invalid expression, Required Format 'variable == 1 or 0'"))},
+		//{"error_when_invalid_format_ones", "a == 11", nil, errors.New(fmt.Sprintf("Invalid expression, Required Format 'variable == 1 or 0'"))},
+		//{"error_when_invalid_format_zeroes", "a == 00", nil, errors.New(fmt.Sprintf("Invalid expression, Required Format 'variable == 1 or 0'"))},
+		//
+		//{"error_when_invalid_format_equals_pair", "a == 1 && b ==== 1", nil, errors.New(fmt.Sprintf("Invalid expression, Required Format 'variable == 1 or 0'"))},
+		//{"error_when_invalid_format_ones_pair", "a == 1 && b == 11", nil, errors.New(fmt.Sprintf("Invalid expression, Required Format 'variable == 1 or 0'"))},
+		//{"error_when_invalid_format_zeroes_pair", "a == 00 && b == 0", nil, errors.New(fmt.Sprintf("Invalid expression, Required Format 'variable == 1 or 0'"))},
+		//
+		//{"error_when_invalid_format_ands", "a == 0 &&& b == 1", nil, errors.New(fmt.Sprintf("Invalid expression, Allowed combinators && or ||"))},
+		//{"error_when_invalid_format_ors", "a == 0 |||| b == 1", nil, errors.New(fmt.Sprintf("Invalid expression, Allowed combinators && or ||"))},
 	}
 
 	for _, table := range tables {
@@ -105,18 +108,32 @@ func TestCheckIfDuplicateExpressions(t *testing.T) {
 		result bool
 		err    error
 	}{
-		{"success_when_one_params", "a == 1", "a == 1", true, nil},
-		{"success_when_two_params", "a == 1 && b == 1", "b == 1 && a == 1", true, nil},
-		{"success_when_three_params", "a == 1 && b == 1 && c == 0", "b == 1 && a == 1 && c == 0", true, nil},
-		{"success_when_three_params", "a == 1 || b == 1 || c == 0", "b == 1 || a == 1 || c == 0", true, nil},
-		{"success_when_three_params", "a == 1 || b == 1 && c == 0", "c == 0 &&  b == 1 || a == 1", true, nil},
-		{"success_when_three_params", "(a == 1 || b == 1) && c == 0", "c == 0 &&  (b == 1 || a == 1)", true, nil},
-		{"success_when_three_params", "a == 1 || (b == 1 && c == 0)", "(c == 0 &&  b == 1) || a == 1", true, nil},
-		{"success_when_four_params", "(a == 1 || b == 1 ) && (c == 0 || a == 1)", "(a == 1 || c == 0 ) && (b == 1 || a == 1)", true, nil},
+		//{"success_with_og_flex_params",
+		//	"(crime == 1 && (entertainment_tv ==1 || movies == 1))",
+		//	"(crime == 1 && (entertainment_tv ==1 || movies == 1))",
+		//	true, nil},
+		{"success_with_flex_params_true",
+			"(firstparty.books_417 == 1 || (topic.pvw_7d_fitness_320 >= 1 || topic.pvw_30d_fitness_320 >= 1) && (section.pvw_7d_sports >= 1 || subsection.pvw_7d_baseball >= 1))",
+			"(firstparty.books_417 == 1 || (topic.pvw_30d_fitness_320 >= 1 || topic.pvw_7d_fitness_320 >= 1) && (subsection.pvw_7d_baseball >= 1 || section.pvw_7d_sports >= 1))",
+			true, nil},
+		{"success_with_flex_params_false",
+			"(firstparty.books_417 == 1 || (topic.pvw_7d_fitness_320 <= 1 || topic.pvw_30d_fitness_320 >= 1) && (section.pvw_7d_sports >= 1 || subsection.pvw_7d_baseball >= 1))",
+			"(firstparty.books_417 == 1 || (topic.pvw_30d_fitness_320 >= 1 || topic.pvw_7d_fitness_320 >= 1) && (subsection.pvw_7d_baseball >= 1 || section.pvw_7d_sports >= 1))",
+			false, nil},
 
-		{"error_when_four_params", "(a == 1 || b == 1 ) && (c == 0 || a == 1)", "(a == 0 || c == 0 ) && (b == 1 || a == 1)", false, nil},
 
-		{"error_when_diff_params", "(a == 1 || b == 1 ) && (c == 0 || a == 1)", "(a == 0 ) && (b == 1 || a == 1)", false, errors.New(fmt.Sprintf("expressions have different number of parameters, params1:%v , params2:%v", []string{"a", "b", "c"}, []string{"a", "b"}))},
+		//{"success_when_one_params", "a == 1", "a == 1", true, nil},
+		//{"success_when_two_params", "a == 1 && b == 1", "b == 1 && a == 1", true, nil},
+		//{"success_when_three_params", "a == 1 && b == 1 && c == 0", "b == 1 && a == 1 && c == 0", true, nil},
+		//{"success_when_three_params", "a == 1 || b == 1 || c == 0", "b == 1 || a == 1 || c == 0", true, nil},
+		//{"success_when_three_params", "a == 1 || b == 1 && c == 0", "c == 0 &&  b == 1 || a == 1", true, nil},
+		//{"success_when_three_params", "(a == 1 || b == 1) && c == 0", "c == 0 &&  (b == 1 || a == 1)", true, nil},
+		//{"success_when_three_params", "a == 1 || (b == 1 && c == 0)", "(c == 0 &&  b == 1) || a == 1", true, nil},
+		//{"success_when_four_params", "(a == 1 || b == 1 ) && (c == 0 || a == 1)", "(a == 1 || c == 0 ) && (b == 1 || a == 1)", true, nil},
+		//
+		//{"error_when_four_params", "(a == 1 || b == 1 ) && (c == 0 || a == 1)", "(a == 0 || c == 0 ) && (b == 1 || a == 1)", false, nil},
+		//
+		//{"error_when_diff_params", "(a == 1 || b == 1 ) && (c == 0 || a == 1)", "(a == 0 ) && (b == 1 || a == 1)", false, errors.New(fmt.Sprintf("expressions have different number of parameters, params1:%v , params2:%v", []string{"a", "b", "c"}, []string{"a", "b"}))},
 	}
 
 	for _, table := range tables {
