@@ -117,7 +117,7 @@ func ValidateFormat(expr string) ([]string, error) {
 	invalidRegex := regexp.MustCompile(`\s+[!=><\d]{1}\s*`)
 	invalidExpr := invalidRegex.MatchString(replaceExpr)
 	if invalidExpr {
-		return nil, errors.New(fmt.Sprintf("Invalid expression, Required Format 'variable == 1 or 0'"))
+		return nil, errors.New(fmt.Sprintf("Invalid expression, Required Format 'variable [== | != | >= | <=] <digit>'"))
 	}
 
 	regex = regexp.MustCompile(`\s+&{2}?\s+`)

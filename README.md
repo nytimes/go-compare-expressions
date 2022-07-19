@@ -16,11 +16,11 @@ go get github.com/nytimes/go-compare-expressions
 ```
 
 ## Usage
- To compare any two boolean/logical expression, call `AreDuplicateExpressions` method by passing the two expression that you want to compare.
+ To compare any two boolean/logical expression, call `CheckIfDuplicateExpressions` method by passing the two expression that you want to compare.
  ```go
     expr1 := "(foo == 1 && bar == 1) || baz = 0 " 
 	expr2 := "baz == 1 || bar == 1 && foo == 1"
-	result, err := AreDuplicateExpressions(expr1,expr2)
+	result, err := CheckIfDuplicateExpressions(expr1,expr2)
 ```
 
 ## Test
