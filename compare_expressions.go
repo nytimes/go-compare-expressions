@@ -110,14 +110,15 @@ values or right side of expressions ----  to be binary only. So it can be 1 or 0
 attribute or left side of expression ---- can be any valid string name
 */
 func ValidateFormat(expr string) ([]string, error) {
-	regex := regexp.MustCompile(`\s*[!=><]{2}?\s*[\d]`)
+	//  `\s*[!=><]{1}([!=><]?)\s*[\d]+`
+	regex := regexp.MustCompile(`\s*(>|<|==|!=|>=|<=){1}\s*[\d]+`)
 	replaceExpr := regex.ReplaceAllString(expr, " ")
 	result := strings.Fields(replaceExpr)
 
 	invalidRegex := regexp.MustCompile(`\s+[!=><\d]{1}\s*`)
 	invalidExpr := invalidRegex.MatchString(replaceExpr)
 	if invalidExpr {
-		return nil, errors.New(fmt.Sprintf("Invalid expression, Required Format 'variable [== | != | >= | <=] <digit>'"))
+		return nil, errors.New(fmt.Sprintf("Invalid expression, Required Format 'variable [==|!=|>|<|>=|<=] <digit>'"))
 	}
 
 	regex = regexp.MustCompile(`\s+&{2}?\s+`)
